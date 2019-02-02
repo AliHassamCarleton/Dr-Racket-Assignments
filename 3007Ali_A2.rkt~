@@ -1,0 +1,332 @@
+;Ali Hassam 100972357
+;Comp3007- Assignment 2
+;Due: February 13 2018
+
+;---------------------------------------------------------------------------;
+;Question 1
+(display "Question 1\n\n")
+
+;A function f is defined by the rules:
+;f(n) = n, if n<4
+;f(n) = f(n-1) + 2f(n-2) + 3f(n-3) + 4f(n-4),
+
+(display "(1a) Recursive\n\n")
+;(1a) [5 marks] Write a procedure that computes f by means of a recursive process.
+;Illustrate that your answer is recursive by showing
+;the substitution model for (f 6) in comments below your code.
+
+(define (f n) ;Recursive 
+  (cond (( < n 4) n)
+        (else (+ (f (- n 1)) (* 2 (f (- n 2))) (* 3 (f (- n 3))) (* 4 (f (- n 4)))))
+   )
+ )
+
+;Subsitution Model
+
+;(f 6)
+;(+(f (- 6 1)) (* 2 (f (- 6 2))) (* 3 (f (- 6 3))) (* 4 (f (- 6 4))))
+;(+(f 5) (* 2 (f 4)) (* 3 (f 3)) (* 4 (f 2)))
+;(+(+(f 4) (* 2 (f 3)) (* 3 (f 2)) (* 4 (f 1))) (* 2 (+ (f 3) (* 2 (f 2)) (* 3 (f 1)) (* 4 (f 0)))) ( * 3 3) (* 4 2))
+;(+(+(+ (f 3) (* 2 (f 2)) (* 3 (f 1)) (* 4 (f 0))) (* 2 3) (* 3 2) (*4 1)) (* 2 (+ 3 (* 2 2) (* 3 1) (* 4 0))) (9) (8))
+;(+(+(+ (3) (* 2 2) (* 3 1) (* 4 0)) (6) (6) (4)) (* 2 (+ 3 (4) (3) (0))) 9 8)
+;(+(+(+ 3 (4) (3) (0)) (6) (6) (4)) (* 2 (10)) 9 8)
+;(+(+(10)(6)(6)(4))20 9 8)
+;(+(26)(20)(9)(8))
+;(63)
+
+;Tests
+(display "(f 6) | Expected Result: 63, Result: ") (f 6)
+(display "(f 4) | Expected Result: 10, Result: ") (f 4)
+(display "(f 2) | Expected Result: 2, Result: ") (f 2)
+
+(display "\n(1b) Iterative\n\n")
+;(1b) [10 marks] Write a procedure that computes f by means of an iterative process (i.e., a tail-recursive program).
+;Illustrate that your answer is iterative by showing the substitution model for (f 6) in comments below your code.
+
+(define (f-iterative n)
+  (if (< n 4)
+      n
+      (f-iterhelper 3 2 1 0 n))
+  )
+
+(define (f-iterhelper a b c d count)
+  (if (= count 4) (+ a (* 2 b) (* 3 c) (* 4 d))
+       (f-iterhelper  (+ a (* 2 b) (* 3 c) (* 4 d)) a b c  (- count 1)) 
+       )
+  )
+
+;Subsitution Model
+;(f-iterative 6)
+;(f-iterhelper(3 2 1 0 6))
+;(f-iterhelper (+ (3) (* 2 2) (* 3 1)(* 4 0)) 3 2 1 5)
+;(f-iterhelper (+ (+ (3) (* 2 2) (* 3 1)(* 4 0)) (* 2 3) (* 3 2) (* 4 1)) (+ (3) (* 2 2) (* 3 1)(* 4 0)) 3 2 4)
+;(f-iterhelper (+ (+ (+ (3) (* 2 2) (* 3 1)(* 4 0)) (* 2 3) (* 3 2) (* 4 1)) (* 2 (+ (3) (* 2 2) (* 3 1)(* 4 0))) (*3 3)(* 4 2) 4)
+;(+(+(+ (3) (4) (3) (0)) (6) (6) (4)) (* 2 (+ (3) (4) (3) (0))) (9) (8))
+;(+(+(10) (6) (6) (4)) (* 2 (10)) (9) (8))
+;(+(26) (20) (9) (8))
+;(63)
+
+;Tests
+(display "(f 6) | Expected Result: 63, Result: ") (f-iterative 6)
+(display "(f 4) | Expected Result: 10, Result: ") (f-iterative 4)
+(display "(f 2) | Expected Result: 2, Result: ") (f-iterative 2)
+
+;---------------------------------------------------------------------------;
+;Question 2
+(display "\nQuestion 2\n\n")
+;Write a procedure that computes elements of Pascal's triangle by means of a recursive process.
+
+(define (pascals x y)
+  (cond ((> y x) 0)
+        ((= x 0) 1)
+        ((= x 1) 1)
+        ((= y 0) 1)
+        (else (+ (pascals (- x 1) (- y 1)) (pascals (- x 1) y)))
+  )
+)
+
+;Tests
+
+(display "(pascals 2 0) | Expected Result: 1, Result: ") (pascals 2 0)
+(display "(pascals 2 1) | Expected Result: 2, Result: ") (pascals 2 1)
+(display "(pascals 4 2) | Expected Result: 6, Result: ") (pascals 4 2)
+
+;---------------------------------------------------------------------------;
+;Question 3
+(display "\nQuestion 3\n\n")
+
+(display "(3a) Recursive Process\n\n")
+;(3a)  [3 marks] Write a recursive procedure (digits n) that computes the number of digits in the integer n using a recursive process.
+;For example, (digits 42) should return 2 and (digits 13579) should return 5.
+;You may wish to make use of the built-in floor predicate for truncating decimals to whole numbers.
+
+(define (digits n)
+  (cond ((< n 10) 1)
+        (else( + 1 (digits (floor (/ n 10)))))
+  )
+)
+
+(display "(digits 123) | Expected Result: 3, Result: ") (digits 123)
+(display "(digits 42) | Expected Result: 2, Result: ") (digits 42)
+(display "(digits 123432) | Expected Result: 6, Result: ") (digits 123432)
+
+
+(display "\n(3b) Iterative Process\n\n")
+;[2 marks] Rewrite your procedure from part (a) using an iterative process.
+;Call the function (digits-iter n).
+
+(define (digits-iter n)
+  (digits-iterhelp n 10 1))
+
+(define (digits-iterhelp n min c)
+  (if (< n min)
+      c
+      (digits-iterhelp (floor (/ n min)) min ( + c 1))
+      )
+  )
+
+(display "(digits-iter 123) | Expected Result: 3, Result: ") (digits-iter 123)
+(display "(digits-iter 42) | Expected Result: 2, Result: ") (digits-iter 42)
+(display "(digits-iter 123432) | Expected Result: 6, Result: ") (digits-iter 123432)
+
+;---------------------------------------------------------------------------;
+;Question 4
+(newline)
+(newline)
+(#%require (only racket/base random))
+
+;[10 marks] Write a procedure to play the game Rock, Paper, Scissors. To begin the game the user should simply call the function (rps).
+;The user should then be prompted with their score (initially zero) and a well-labelled input field for their action.
+;When the user chooses their action (rock, paper, or scissors), their answer will be compared to a randomly chosen computer action.
+;Depending on the outcome, the user's score will go up, down, or stay the same in the next round.
+
+(display "Question 4: type (rps) into console to play Rock Paper Scissors\n")
+
+(define (rps)
+
+  (display "Lets play Rock Paper Scissors!\n")
+
+  (define (round currentscore lastscore currentround)
+    (if (> currentround 0) ;not before first game played
+
+        (cond  ((= currentscore lastscore)(display "DRAW (Player Score +0)")(display " New score ")(display lastscore)) 
+               ((> currentscore lastscore)(display "YOU WIN (Player Score +1)")(display " New score ")(display (+ lastscore 1)))
+               ((< currentscore lastscore)(display "YOU LOSE (Player Score -1)")(display " New score ")(display (- lastscore 1)))
+        )
+    )
+    (newline)
+    (newline)
+    (display "Take your pick: \n0:Rock\n1:Paper\n2:Scissors\n\n")
+    (define choice (read))
+    ;player choice eval
+    (cond ((= choice 0) (display "Player choice: Rock \n"))
+          ((= choice 1) (display "Player choice: Paper \n"))
+          ((= choice 2) (display "Player choice: Scissors \n"))
+          (else (display "Your choice was not valid \n")(round currentscore currentscore currentround)))
+
+    (define rng (random 3)) ;makes computer choice
+
+    (cond ((= rng 0) (display "AI choice: Rock\n"))
+          ((= rng 1) (display "AI choice: Paper\n"))
+          ((= rng 2) (display "AI choice: Scissors\n")))
+    ;comarisons of choices
+    (cond ((= choice rng) (round currentscore currentscore (+ currentround 1)))
+          ((and (= choice 0)(= rng 1)) (round (- currentscore 1) currentscore (+ currentround 1)))
+          ((and (= choice 1)(= rng 2)) (round (- currentscore 1) currentscore (+ currentround 1)))
+          ((and (= choice 2)(= rng 0)) (round (- currentscore 1) currentscore (+ currentround 1)))
+          (else (round (+ currentscore 1) currentscore (+ currentround 1)))))
+  (round 0 0 0)) ;jump to round func for next
+
+
+;--------- Testing for Rock Paper Scissors-----------;
+
+;The following is has been tested on the console and the results have been posted below
+
+;> (rps)
+;Lets play Rock Paper Scissors!
+
+
+;Take your pick: 
+;0:Rock
+;1:Paper
+;2:Scissors
+
+;1
+;Player choice: Paper 
+;AI choice: Scissors
+;YOU LOSE (Player Score -1) New score -1
+
+;Take your pick: 
+;0:Rock
+;1:Paper
+;2:Scissors
+
+;2
+;Player choice: Scissors 
+;AI choice: Scissors
+;DRAW (Player Score +0) New score -1
+
+;Take your pick: 
+;0:Rock
+;1:Paper
+;2:Scissors
+
+;3
+;Your choice was not valid 
+;DRAW (Player Score +0) New score -1
+
+;Take your pick: 
+;0:Rock
+;1:Paper
+;2:Scissors
+
+;0
+;Player choice: Rock 
+;AI choice: Paper
+;YOU LOSE (Player Score -1) New score -2
+
+;--------- end of testing of rps -------------
+
+
+;---------------------------------------------------------------------------;
+;Question 5
+(display "\nQuestion 5\n\n")
+
+;[5 marks] Consider the definition of general summation of numbers between two values as describe in lecture:
+;The general sum procedure above generates a linear recursive process. 
+;Rewrite it as an iterative process.
+
+(define (sum a b)
+  (if (> a b)
+      0
+  (sum-iter a b a))
+)
+
+(define (sum-iter a cap count)
+	(if (= count cap)
+	    a
+	    (sum-iter (+ a (+ count 1)) cap (+ count 1))
+        )
+  )
+
+
+
+(display "(sum 9 0) | Expected Result: 0, Result: ") (sum 9 0)
+(display "(sum 1 30) | Expected Result: 465, Result: ") (sum 1 30)
+(display "(sum 1 75) | Expected Result: 2850, Result: ") (sum 1 75)
+(display "(sum 1 1) | Expected Result: 1, Result: ") (sum 1 1)
+
+;---------------------------------------------------------------------------;
+;Question 6
+(newline)
+
+;Helper Functions for Question 6
+(define (average x y) (/ (+ x (* 2 y)) 3))
+(define (square x) (* x x))
+(define (cube x) (* x x x))
+
+
+
+;(6a)   [5 marks] Newton's method for cube roots is based on the fact that if y is an approximation to the cube root of x,
+;then a better approximation is given by the value: (x/y2+2y)/3
+;Use this formula to implement a cube-root procedure analogous to the square-root procedure from the lecture notes.
+
+(define (cuberoot good-enough? x)
+	(define (improve guess)
+        (average ( / x (square guess)) guess)
+ )
+
+    (define (cuberoot-iter guess)
+        (if (good-enough? guess x)
+            guess
+            (cuberoot-iter (improve guess))))
+	(cuberoot-iter 1.0)
+ )
+
+
+
+;(6b)   [3 marks] Modify the algorithm in order to allow a user-defined procedure for good-enough?
+;to be passed in as an argument and used in the algorithm. The user-defined procedure should be passed into the outer cube-root-finding procedure.
+;E.g. (cbrt my-good-enough1 27).
+;Demonstrate in your test cases that you can calculate the cube root of 27 using differing 'good-enough?' functions that vary the accuracy of the result
+;(you will need to define these various good-enough functions yourself.
+
+(define (good-enough1 guess x)
+        (< (abs (- (cube guess) x)) 0.001)) ;vary accuracy
+
+(define (good-enough2 guess x)
+        (< (abs (- (cube guess) x)) 0.00001)) ;vary accuracy
+
+(define (good-enough3 guess x)
+        (< (abs (- (cube guess) x)) 0.00000001)) ;vary accuracy
+
+(display "Question (6B): Testing of cuberoot:\n")
+
+;test all accuracy changing good enough functions and cuberoot fucntion
+(display "(cuberoot good-enough1 27) | Expected Result: approx 3, Result: ") (cuberoot good-enough1 27)
+(display "(cuberoot good-enough1 27) | Expected Result: approx 3, Result: ") (cuberoot good-enough2 27)
+(display "(cuberoot good-enough1 27) | Expected Result: approx 3  Result: ") (cuberoot good-enough3 27)
+
+
+;(6c)   [2 marks] Using the new-if procedure as shown below. Replace the use of if in cbrt-iter with new-if.
+;Does the new version work? Explain why or why not.
+
+;When we replace if with new-if the end result is infinite recurssion.  Thus, eventually the compiler
+;will crash as it will run out of memory.
+
+;---------------------------------------------------------------------------;
+
+;This question is incomplete -> skip
+
+;Question 7 
+
+;Write a function called forAll that satisfies the following interaction.
+;The function forAll should create a closure with the specified parameters and the required behaviour.
+
+;(define my_iterator (forAll 1 5))
+;(my_iterator + 0) → 15
+;(my_iterator * 1) → 120
+;(my_iterator (lambda (x y) (display x)(display " ")) "") → 1 2 3 4 5
+
+
+
